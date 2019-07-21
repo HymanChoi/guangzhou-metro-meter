@@ -78,7 +78,7 @@ export default {
 };
 </script>
 
-<style scoped>
+<style lang="scss" scoped>
 .el-row {
   margin-bottom: 20px;
   &:last-child {
