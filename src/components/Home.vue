@@ -3,65 +3,82 @@
     <el-container>
       <el-header class="header">广州地铁计价器</el-header>
       <el-main>
-        <!-- 起始位置 -->
-        <el-row :gutter="20">
+        <!-- 起点位置 -->
+        <el-row>
           <el-col :span="8" :offset="4">
-            <div class="grid-content bg-purple box">
-              <el-select v-model="startLineValue" placeholder="请选择" size="medium">
-                <el-option v-for="(item,key) in sLine" :key="key" :value="item"></el-option>
-              </el-select>
-            </div>
+            <label class="label">起点线:</label>
+            <el-select v-model="startLineValue" placeholder="请选择">
+              <el-option v-for="(item,key) in sLine" :key="key" :value="item"></el-option>
+            </el-select>
           </el-col>
           <el-col :span="8">
-            <div class="grid-content bg-purple">
-              <el-select v-model="startStationValue" placeholder="请选择">
-                <el-option v-for="(item,key) in startStation" :key="key" :value="item"></el-option>
-              </el-select>
-            </div>
+            <label class="label label2">起点站:</label>
+            <el-select v-model="startStationValue" placeholder="请选择">
+              <el-option v-for="(item,key) in startStation" :key="key" :value="item"></el-option>
+            </el-select>
           </el-col>
         </el-row>
         <!-- 终点位置 -->
-        <el-row :gutter="20">
+        <el-row>
           <el-col :span="8" :offset="4">
-            <div class="grid-content bg-purple">
-              <el-select v-model="endLineValue" placeholder="请选择">
-                <el-option v-for="(item,key) in eLine" :key="key" :value="item"></el-option>
-              </el-select>
-            </div>
+            <label class="label">终点线:</label>
+            <el-select v-model="endLineValue" placeholder="请选择">
+              <el-option v-for="(item,key) in eLine" :key="key" :value="item"></el-option>
+            </el-select>
           </el-col>
           <el-col :span="8">
-            <div class="grid-content bg-purple">
-              <el-select v-model="endStationValue" placeholder="请选择">
-                <el-option v-for="(item,key) in endStation" :key="key" :value="item"></el-option>
-              </el-select>
-            </div>
+            <label class="label label2">终点线:</label>
+            <el-select v-model="endStationValue" placeholder="请选择">
+              <el-option v-for="(item,key) in endStation" :key="key" :value="item"></el-option>
+            </el-select>
           </el-col>
         </el-row>
         <!-- 其他信息 -->
         <el-row>
           <el-col :span="4" :offset="4">
-            <el-select v-model="value" placeholder="请选择">
+            <el-select v-model="way" placeholder="付费方式">
               <el-option
-                v-for="item in options"
-                :key="item.value"
+                v-for="(item,key) in options"
+                :key="key"
                 :label="item.label"
                 :value="item.value"
               ></el-option>
             </el-select>
           </el-col>
           <el-col :span="4">
-            <el-input class="input" v-model="input" placeholder="请输入天数"></el-input>
+            <el-input class="input" v-model="time" placeholder="乘坐次数"></el-input>
           </el-col>
           <el-col :span="8">
-            <el-button type="danger" icon="el-icon-search" @click="search">搜索</el-button>
+            <el-button class="btn" type="danger" icon="el-icon-search" @click="search">搜索</el-button>
           </el-col>
         </el-row>
         <!-- 计算结果 -->
         <el-row>
-          <el-col :span="16" :offset="4" class="box">{{result}}</el-col>
+          <el-col :span="16" :offset="4" class="box">
+            <el-col :span="16" class="left">
+              <p class="title">计价规则</p>
+              <p class="rule">
+                起步4公里以内2元。
+                <br />4至12公里范围内每递增4公里加1元。
+                <br />12至24公里范围内每递增6公里加1元。
+                <br />24公里以后，每递增8公里加1元。
+              </p>
+              <p class="rule">
+                羊城通/岭南通: 9.5折
+                <br />学生卡: 5折
+                <br />老人卡(65岁以上): 5折
+                <br />老人卡(60岁-65岁): 免费
+                <br />重度残疾人卡: 免费
+              </p>
+            </el-col>
+            <el-col :span="16" class="right">
+              <p>{{result}}</p>
+              <p>{{total}}</p>
+            </el-col>
+          </el-col>
         </el-row>
       </el-main>
-      <el-footer>Designed by Hyman</el-footer>
+      <el-footer class="footer">Designed by Hyman</el-footer>
     </el-container>
   </div>
 </template>
@@ -84,16 +101,19 @@ export default {
       eLine: Object.keys(stationData),
       endStation: [],
 
-      value: "",
+      way: "",
       options: [
-        { value: "羊城通/岭南通" },
-        { value: "老人卡" },
-        { value: "学生卡" },
-        { value: "车票" }
+        { label: "羊城通/岭南通", value: "0.95" },
+        { label: "学生卡", value: "0.5" },
+        { label: "老人卡(65岁以上)", value: "0.5" },
+        { label: "老人卡(60岁-65岁)", value: "0" },
+        { label: "重度残疾人卡", value: "0" },
+        { label: "普通车票", value: "1" }
       ],
-      input: "",
+      time: "",
 
       result: "",
+      total: "",
       list: []
     };
   },
@@ -103,6 +123,9 @@ export default {
     },
     endLineValue() {
       this.endStation = stationData[this.endLineValue];
+    },
+    way() {
+      console.log(this.way);
     }
   },
   methods: {
@@ -111,14 +134,27 @@ export default {
 
       let distance = "";
       let fare = "";
-      if (this.startStationValue == this.endStationValue) {
+      let fareTotal = "";
+      if (this.startLineValue == "" || this.startStationValue == "") {
+        this.$message.error("麻烦选择起点位置");
+        // this.result = "麻烦选择起点位置";
+      } else if (this.endLineValue == "" || this.endStationValue == "") {
+        this.$message.error("麻烦选择终点位置");
+        // this.result = "麻烦选择终点位置";
+      } else if (this.way == "") {
+        this.$message.error("麻烦选择付费方式");
+      } else if (this.time == "") {
+        this.$message.error("麻烦选择乘坐次数");
+      } else if (this.startStationValue == this.endStationValue) {
         this.result = "您还是走路吧！";
       } else {
         distance = format(
           Dijkstra.shortestPath(this.startStationValue, this.endStationValue)
         );
-        fare = caleFare(distance);
-        this.result = "单程: " + distance + " 公里，费用:" + fare + " 元";
+        fare = (caleFare(distance) * this.way).toFixed(2);
+        fareTotal = fare * this.time;
+        this.result = "单程: " + distance + " 公里, 费用:" + fare + " 元";
+        this.total = "次数: " + this.time + " 次, 总费用:" + fareTotal + " 元";
       }
 
       // 计价方式
@@ -162,33 +198,42 @@ export default {
 .el-col {
   border-radius: 4px;
 }
-.bg-purple-dark {
-  background: #99a9bf;
-}
-.bg-purple {
-  background: #d3dce6;
-}
-.bg-purple-light {
-  background: #e5e9f2;
-}
-.grid-content {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  border-radius: 4px;
-  min-height: 80px;
-}
-.row-bg {
-  padding: 10px 0;
-  background-color: #f9fafc;
-}
 
 // 头部样式
 .header {
   font-size: 24px;
 }
+.label {
+  width: 80px;
+  margin-right: 20px;
+}
+.label2 {
+  margin-left: 40px;
+}
 // 输入框样式
 .input {
-  width: 200px;
+  width: 105px;
+}
+// 按钮样式
+.btn {
+  width: 305px;
+}
+.footer {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+// 输出框样式
+.title {
+  text-align: center;
+  font-size: 18px;
+}
+.left {
+  text-align: left;
+  margin-left: 30px;
+}
+.right {
+  text-align: left;
+  margin-left: 60px;
 }
 </style>
