@@ -1,5 +1,5 @@
-Dijkstra = function () {
-    var graph = {};
+let Dijkstra = function () {
+    let graph = {};
 
     function addEdge(source, target, weight) {
         if (!(source in graph)) graph[source] = {};
@@ -11,8 +11,8 @@ Dijkstra = function () {
 
     // 将edges数组拆分成小数组
     function addEdges(edges) {
-        for (var i = 0; i < edges.length; ++i) {
-            var edge = edges[i];
+        for (let i = 0; i < edges.length; ++i) {
+            let edge = edges[i];
             addEdge(edge[0], edge[1], edge[2])
         }
     }
@@ -20,16 +20,16 @@ Dijkstra = function () {
     function shortestPath(source, target) {
         // 判断起始点与终点是否在graph数组中
         if (!(source in graph) || !(target in graph)) return 1 / 0;
-        var dist = {},
+        let dist = {},
             visited = {},
             numVertex = 0;
-        for (var v in graph) dist[v] = 1 / 0,
+        for (let v in graph) dist[v] = 1 / 0,
             numVertex++;
         dist[source] = 0;
-        for (var i = 0; i < numVertex; ++i) {
-            var minDist = 1 / 0,
+        for (let i = 0; i < numVertex; ++i) {
+            let minDist = 1 / 0,
                 minV = void 0;
-            for (var v in dist)
+            for (let v in dist)
                 if (!(v in visited)) {
                     if (minDist > dist[v]) minDist = dist[v],
                         minV = v
@@ -37,10 +37,10 @@ Dijkstra = function () {
             if (void 0 === minV) break;
             if (minV === target) return minDist;
             visited[minV] = true;
-            var edges = graph[minV];
-            for (var v in edges)
+            let edges = graph[minV];
+            for (let v in edges)
                 if (!(v in visited)) {
-                    var newDist = minDist + edges[v];
+                    let newDist = minDist + edges[v];
                     if (dist[v] > newDist) dist[v] = newDist
                 } else;
         }
@@ -53,3 +53,5 @@ Dijkstra = function () {
         shortestPath: shortestPath
     }
 }();
+
+export default Dijkstra
