@@ -37,12 +37,7 @@
         <el-row>
           <el-col :span="4" :offset="4">
             <el-select v-model="way" placeholder="付费方式">
-              <el-option
-                v-for="(item,key) in options"
-                :key="key"
-                :label="item.label"
-                :value="item.value"
-              ></el-option>
+              <el-option v-for="(item,key) in options" :key="key" :value="item"></el-option>
             </el-select>
           </el-col>
           <el-col :span="4">
@@ -58,10 +53,10 @@
             <el-col :span="16" class="left">
               <p class="title">计价规则</p>
               <p class="rule">
-                起步4公里以内2元。
-                <br />4至12公里范围内每递增4公里加1元。
-                <br />12至24公里范围内每递增6公里加1元。
-                <br />24公里以后，每递增8公里加1元。
+                起步4公里以内2元
+                <br />4至12公里范围内每递增4公里加1元
+                <br />12至24公里范围内每递增6公里加1元
+                <br />24公里以后，每递增8公里加1元
               </p>
               <p class="rule">
                 羊城通/岭南通: 9.5折
@@ -72,8 +67,9 @@
               </p>
             </el-col>
             <el-col :span="16" class="right">
-              <p>{{result}}</p>
-              <p>{{total}}</p>
+              <p class="title">计算结果</p>
+              <p class="content">{{result}}</p>
+              <p class="content">{{total}}</p>
             </el-col>
           </el-col>
         </el-row>
@@ -102,19 +98,19 @@ export default {
       endStation: [],
 
       way: "",
+      price: "",
       options: [
-        { label: "羊城通/岭南通", value: "0.95" },
-        { label: "学生卡", value: "0.5" },
-        { label: "老人卡(65岁以上)", value: "0.5" },
-        { label: "老人卡(60岁-65岁)", value: "0" },
-        { label: "重度残疾人卡", value: "0" },
-        { label: "普通车票", value: "1" }
+        "羊城通/岭南通",
+        "学生卡",
+        "老人卡(65岁以上)",
+        "老人卡(60岁-65岁)",
+        "重度残疾人卡",
+        "普通车票"
       ],
       time: "",
 
       result: "",
-      total: "",
-      list: []
+      total: ""
     };
   },
   watch: {
@@ -123,9 +119,6 @@ export default {
     },
     endLineValue() {
       this.endStation = stationData[this.endLineValue];
-    },
-    way() {
-      console.log(this.way);
     }
   },
   methods: {
@@ -151,7 +144,27 @@ export default {
         distance = format(
           Dijkstra.shortestPath(this.startStationValue, this.endStationValue)
         );
-        fare = (caleFare(distance) * this.way).toFixed(2);
+        switch (this.way) {
+          case "羊城通/岭南通":
+            this.price = 0.95;
+            break;
+          case "学生卡":
+            this.price = 0.5;
+            break;
+          case "老人卡(65岁以上)":
+            this.price = 0.5;
+            break;
+          case "老人卡(60岁-65岁)":
+            this.price = 0;
+            break;
+          case "重度残疾人卡":
+            this.price = 0;
+            break;
+          case "普通车票":
+            this.price = 1;
+            break;
+        }
+        fare = (caleFare(distance) * this.price).toFixed(2);
         fareTotal = fare * this.time;
         this.result = "单程: " + distance + " 公里, 费用:" + fare + " 元";
         this.total = "次数: " + this.time + " 次, 总费用:" + fareTotal + " 元";
@@ -229,11 +242,13 @@ export default {
   font-size: 18px;
 }
 .left {
+  text-align: center;
+}
+.rule {
+  margin-left: 25%;
   text-align: left;
-  margin-left: 30px;
 }
 .right {
-  text-align: left;
-  margin-left: 60px;
+  text-align: center;
 }
 </style>
