@@ -44,7 +44,7 @@
             <el-input class="input" v-model="time" placeholder="乘坐次数"></el-input>
           </el-col>
           <el-col :span="8">
-            <el-button class="btn" type="danger" icon="el-icon-search" @click="search">搜索</el-button>
+            <el-button class="btn" type="danger" icon="el-icon-search" @click="search">查看</el-button>
           </el-col>
         </el-row>
         <!-- 计算结果 -->
