@@ -1,8 +1,7 @@
 # Guangzhou-Metro-Meter
-This is a Guangzhou Metro Meter.
 
 ### 项目介绍
-这是一个广州地铁计价器
+这是一个广州地铁计价器(线路更新中...)
 
 #### 项目技术
 Vue + ElementUI + Dijkstra算法

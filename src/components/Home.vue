@@ -35,13 +35,15 @@
         </el-row>
         <!-- 其他信息 -->
         <el-row>
-          <el-col :span="4" :offset="4">
-            <el-select v-model="way" placeholder="付费方式">
+          <el-col :span="5" :offset="4">
+            <label class="label">付费方式:</label>
+            <el-select v-model="way" placeholder="请选择">
               <el-option v-for="(item,key) in options" :key="key" :value="item"></el-option>
             </el-select>
           </el-col>
-          <el-col :span="4">
-            <el-input class="input" v-model="time" placeholder="乘坐次数"></el-input>
+          <el-col :span="3">
+            <label class="label">乘坐次数:</label>
+            <el-input class="input" v-model="time" placeholder="请输入"></el-input>
           </el-col>
           <el-col :span="8">
             <el-button class="btn" type="danger" icon="el-icon-search" @click="search">查看</el-button>
@@ -214,6 +216,10 @@ export default {
 
 // 头部样式
 .header {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 160px;
   font-size: 24px;
 }
 .label {
@@ -235,6 +241,8 @@ export default {
   display: flex;
   justify-content: center;
   align-items: center;
+  min-height: 160px;
+  font-size: 16px;
 }
 // 输出框样式
 .title {
@@ -250,5 +258,10 @@ export default {
 }
 .right {
   text-align: center;
+  vertical-align: middle;
+}
+.content {
+  line-height: 103px;
+  min-height: 103px;
 }
 </style>
